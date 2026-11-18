@@ -37,3 +37,7 @@ Kaynak: `../baseline-2/` (değiştirilmedi), `a-run-2.json` (kopyası bu klasör
 - Oturum başına 10 toplam saat varsayımı gerçek kullanımda geçerli mi, belirsiz.
 - Tanımsız metotlarda `NoMethodError` Ruby'nin varsayılan davranışıdır; kasıtlı bir tasarım kanıtı yok.
 - Claude'un "6 test geçti" iddiası doğrulandı ama gereksinim karşılandığını göstermez.
+
+## Kaynak anlık görüntüsü
+`evidence/run-a/source/` klasörü, `../baseline-2/` içindeki orijinal Run A dosyalarının birebir kopyasıdır (`lib/student.rb`, `lib/attendance_checker.rb`, `main.rb`, `test/test_attendance.rb`). Kopyalama sonrası SHA-256 özetleri kaynakla karşılaştırıldı ve dört dosya için de aynıdır. Dosyalar düzeltilmedi veya yeniden üretilmedi.
+`ruby-test-output.txt`, bu kaynakla alınmış gerçek test çıktısıdır.

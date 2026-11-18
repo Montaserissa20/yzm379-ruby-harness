@@ -83,21 +83,23 @@ Yorum: **B bu deneyde daha pahalı ve daha çok turlu çıktı**; yalnızca outp
 - B'de 3 komut izin kuralları nedeniyle reddedildi (`permission_denials`), ardından `ruby bin/kontrol` çalıştı.
 
 ## 12. Kanıt konumları
-- `evidence/run-a/`: `a-run-2.json`, `a-run-preliminary.json`, `ruby-test-output.txt`, `ANALIZ.md`.
+- `evidence/run-a/`: `a-run-2.json` (resmi Run A), `a-run-preliminary.json` (ilk deneme, yalnızca ön kanıt; karşılaştırmada kullanılmadı), `source/` (orijinal Run A kaynağının birebir kopyası, SHA-256 doğrulandı), `ruby-test-output.txt`, `ANALIZ.md`.
 - `evidence/run-b/`: `prompt.txt`, `run-b-stream.jsonl` (ham akış + hook olayları), `run-b-result.json` (akıştaki sonuç satırı, değiştirilmedi), `run-b-transcript.jsonl`, `hook-kontrol.log`, `pre-b-harness/` ve `pre-b-harness.sha256`, `started-at.txt`, `finished-at.txt`.
-- `run-b-transcript.jsonl` yayın öncesi e-posta adresi `[EMAIL-REDACTED]` ile maskelenmiştir; başka değişiklik yoktur.
+- `run-b-transcript.jsonl` yayın öncesi maskelenmiştir: e-posta adresi `[EMAIL-REDACTED]`, Windows kullanıcı adı yol içinde `[USER]` olarak değiştirildi; başka değişiklik yoktur. `run-b-stream.jsonl` ve `run-b-result.json` ham haliyle durur (ölçümler değiştirilmedi); akışta yalnızca yerel Windows kullanıcı adı yol içinde geçer. Kimlik bilgisi/API anahtarı bulunmadı.
 
 ## 13. Sınırlamalar
-- **Gerçek symlink yok**: Windows'ta yönetici yetkisi/Developer Mode olmadığından `ln -s AGENTS.md CLAUDE.md` ("Operation not permitted") ve `New-Item -SymbolicLink` ("Administrator privilege required") başarısız. Alternatif: `CLAUDE.md` içinde `@AGENTS.md`.
-- Tek koşu A, tek koşu B; varyans ölçülmedi. Ajan çıktısı koşudan koşuya değişebilir.
-- A'da kullanılan izin modu JSON'da kayıtlı değil; B `acceptEdits` + `Bash(ruby:*)`/`Write`/`Edit` ile çalıştı. Araç izinleri A ile birebir aynı olmayabilir.
+- **Gerçek symlink yok**: Windows'ta yönetici yetkisi/Developer Mode olmadığından `ln -s AGENTS.md CLAUDE.md` ("Operation not permitted") ve `New-Item -SymbolicLink` ("Administrator privilege required") başarısız. Belgelenen alternatif kullanıldı: `CLAUDE.md` içinde `@AGENTS.md`.
+- Resmi A için tek, B için tek koşu ölçüldü; varyans ölçülmedi. Bu nedenle A/B sonuçları maliyet veya tur sayısı konusunda istatistiksel olarak güvenilir bir iyileşme göstermez.
+- Run A'nın izin yapılandırması tam kaydedilmedi; B `acceptEdits` + `Bash(ruby:*)`/`Write`/`Edit` ile çalıştı. Araç izinleri birebir aynı olmayabilir.
+- Run B sırasında üç komut izin reddi yaşadı (`permission_denials`); bu ek turlar B'nin ölçümüne dahildir.
 - Test arayüzü (`Ogrenci.new(ad:, durum:, devamsizlik:)`, `degerlendir`, `uygulanir?`) benim tarafımdan seçildi; hocanın verdiği bir arayüz değildir.
 - Hash+lambda yapısı, `method_missing` ve monkey patch yasakları testle değil elle/grep ile doğrulandı.
-- Windows kullanıcı adı ve yerel yollar kanıt dosyalarında yer alır.
+- Windows kullanıcı adı ve yerel yollar ham akış dosyasında yer alır.
 
 ## 14. Yapamadıklarım
 - Harness kurma emeğinin token/maliyetini ayrı ölçemedim.
-- Birden fazla koşu yapıp ortalama alamadım.
-- CLAUDE.md için gerçek bir sembolik bağ oluşturamadım.
-- `main.rb` gibi çalıştırılabilir bir konsol arayüzü yok; görev yalnızca kod dosyalarını istiyordu ve B bunu üretmedi.
-- Depoyu GitHub'a yayınlayıp herkese açık olduğunu doğrulamadım (onay bekleniyor).
+- Birden fazla koşu yapıp ortalama alamadım; yalnızca bir resmi A ve bir B ölçüldü.
+- `CLAUDE.md` için gerçek bir sembolik bağ oluşturamadım (Windows izinleri); `@AGENTS.md` alternatifini kullandım.
+- Run A'nın izin yapılandırmasını tam olarak kaydedemedim.
+- Çalıştırılabilir bir konsol arayüzü (`main.rb`) yok; görev yalnızca kod dosyalarını istiyordu ve B bunu üretmedi.
+- Sonuç: harness ödev gereksinimlerine uyumu artırdı (A uymadı, B uydu), ancak B daha pahalı (0,1655117$ ve 10 tur; A: 0,1153485$ ve 6 tur) ve daha çok turlu çıktı. Harness'in maliyeti veya tur sayısını düşürdüğü iddia edilmez.
