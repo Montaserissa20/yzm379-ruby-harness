@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Doğrulama komutu (Sensör). Minitest paketini çalıştırır.
+#   ruby bin/kontrol          -> testleri çalıştırır
+#   ruby bin/kontrol --hook   -> Claude Code PostToolUse hook modu (stdin'den JSON okur,
+#                                ilgisiz dosyalarda testi atlar, hata çıktısını stderr'e yazar)
+# Çıkış kodu: 0 = testler geçti, 2 = başarısız (yükleme hatası dahil).
+# KONTROL_LOG ortam değişkeni verilirse çıktı zaman damgasıyla o dosyaya eklenir.
+
+require "json"
+require "open3"
+require "time"
+
+KOK = File.expand_path("..", __dir__)
+TEST_DOSYASI = File.join(KOK, "test", "ogrenci_test.rb")
+HOOK_MODU = ARGV.include?("--hook")
+
+def ilgili_dosya?(yol)
+  return false unless yol.is_a?(String)
+
+  goreli = yol.tr("\\", "/").sub(%r{\A#{Regexp.escape(KOK.tr("\\", "/"))}/}i, "")
+  goreli.match?(%r{\A(lib/.+\.rb|test/.+\.rb|main\.rb|bin/kontrol)\z})
+end
+
+if HOOK_MODU
+  girdi = begin
+    JSON.parse($stdin.read)
+  rescue JSON::ParserError
+    {}
+  end
+  yol = girdi.dig("tool_input", "file_path")
+  exit 0 unless ilgili_dosya?(yol)
+end
+
+komut = [RbConfig.ruby, "-I", File.join(KOK, "lib"), "-I", File.join(KOK, "test"), TEST_DOSYASI]
+cikti, durum = Open3.capture2e(*komut, chdir: KOK)
+
+if (log = ENV["KONTROL_LOG"])
+  File.open(File.expand_path(log, KOK), "a") do |f|
+    f.puts "--- #{Time.now.iso8601} cikis=#{durum.success? ? 0 : 2} hook=#{HOOK_MODU}"
+    f.puts cikti
+  end
+end
+
+if durum.success?
+  puts cikti unless HOOK_MODU
+  puts "KONTROL: GEÇTİ" unless HOOK_MODU
+  exit 0
+else
+  stream = HOOK_MODU ? $stderr : $stdout
+  stream.puts cikti
+  stream.puts "KONTROL: BAŞARISIZ — testleri geçirmeden işi tamamlanmış sayma."
+  exit 2
+end

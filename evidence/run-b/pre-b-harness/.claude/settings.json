@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "KONTROL_LOG=evidence/run-b/hook-kontrol.log ruby \"${CLAUDE_PROJECT_DIR}/bin/kontrol\" --hook",
+            "timeout": 120,
+            "statusMessage": "Minitest doğrulaması çalışıyor..."
+          }
+        ]
+      }
+    ]
+  }
+}

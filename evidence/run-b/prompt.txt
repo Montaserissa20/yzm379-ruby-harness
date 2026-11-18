@@ -1,0 +1,1 @@
+Ruby ile öğrenci devamsızlık kontrolü yapan bir uygulama geliştir. Devamsızlık sınırı %30'dur. Kod dosyalarını oluştur.

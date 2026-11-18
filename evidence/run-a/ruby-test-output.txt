@@ -1,0 +1,15 @@
+ruby 3.4.7 (2025-10-08 revision 7a5688e2a2) +PRISM [x64-mingw-ucrt]
+Run options: -v --seed 39106
+
+# Running:
+
+TestAttendance#test_remaining_hours = 0.00 s = .
+TestAttendance#test_above_limit_fails = 0.00 s = .
+TestAttendance#test_absence_rate = 0.00 s = .
+TestAttendance#test_below_limit_passes = 0.00 s = .
+TestAttendance#test_invalid_input = 0.00 s = .
+TestAttendance#test_exactly_at_limit_passes = 0.00 s = .
+
+Finished in 0.000942s, 6369.4255 runs/s, 9554.1382 assertions/s.
+
+6 runs, 9 assertions, 0 failures, 0 errors, 0 skips
